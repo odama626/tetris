@@ -1,0 +1,305 @@
+/**
+	*
+	*		Only Put Sass variables and mixins here
+	*
+	*/
+.Header__spacer__1y7B5,
+.Header__lowerSpacer__1cspI {
+  height: 50px;
+  padding: 10px;
+  left: 0;
+  right: 0;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box; }
+
+.Header__lowerSpacer__1cspI {
+  top: 50px; }
+
+.Header__navItem__2gjN8,
+.Header__navSubItem__11loM {
+  color: #ffffff;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  text-decoration: none;
+  margin: 0 20px;
+  font-size: 18px; }
+  .Header__navItem__2gjN8:not(:disabled),
+  .Header__navSubItem__11loM:not(:disabled) {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    cursor: pointer; }
+  .Header__navItem__2gjN8:disabled,
+  .Header__navSubItem__11loM:disabled {
+    pointer-events: none;
+    color: grey; }
+  @media (max-width: 1299px) {
+    .Header__navItem__2gjN8,
+    .Header__navSubItem__11loM {
+      margin: 0 10px; } }
+  @media (max-width: 896px) {
+    .Header__navItem__2gjN8,
+    .Header__navSubItem__11loM {
+      -webkit-box-sizing: border-box;
+         -moz-box-sizing: border-box;
+              box-sizing: border-box;
+      margin: 0;
+      padding: 10px;
+      padding-left: 0;
+      border-bottom: 1px solid white;
+      width: -webkit-calc(100%);
+      width: -moz-calc(100%);
+      width: calc(100%); } }
+
+h1.Header__navItem__2gjN8 {
+  font-weight: normal;
+  border-bottom: 1px solid #007aff;
+  width: 100%; }
+
+.Header__navSubItem__11loM {
+  margin: 5px 20px; }
+
+.Header__container__2Ypgr,
+.Header__lowerContainer__2zAV5 {
+  left: 0;
+  right: 0;
+  top: 0;
+  position: absolute;
+  height: 50px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  background-color: #2f7dbf;
+  color: #ffffff;
+  padding: 10px;
+  z-index: 100; }
+  @media (max-width: 896px) {
+    .Header__container__2Ypgr,
+    .Header__lowerContainer__2zAV5 {
+      padding: 5px; } }
+
+.Header__brandName__2zGMU {
+  padding-left: 10px;
+  font-size: 30px; }
+
+.Header__leftContainer__32s-O {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 90px;
+  -webkit-justify-content: space-around;
+      -ms-flex-pack: distribute;
+          justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box; }
+  @media (max-width: 896px) {
+    .Header__leftContainer__32s-O {
+      width: 100%;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+         -moz-box-orient: vertical;
+         -moz-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      -webkit-box-pack: start;
+      -webkit-justify-content: flex-start;
+         -moz-box-pack: start;
+          -ms-flex-pack: start;
+              justify-content: flex-start;
+      -webkit-box-align: start;
+      -webkit-align-items: flex-start;
+         -moz-box-align: start;
+          -ms-flex-align: start;
+              align-items: flex-start;
+      padding: 10px;
+      position: fixed;
+      -webkit-transform-origin: top;
+         -moz-transform-origin: top;
+          -ms-transform-origin: top;
+           -o-transform-origin: top;
+              transform-origin: top;
+      top: 50px;
+      -webkit-transition: all 250ms ease-in-out;
+      -o-transition: all 250ms ease-in-out;
+      -moz-transition: all 250ms ease-in-out;
+      transition: all 250ms ease-in-out;
+      bottom: 0;
+      left: 0; }
+      .Header__leftContainer__32s-O.Header__leftClosed__3mc3Y {
+        -webkit-transform: scaleY(0);
+           -moz-transform: scaleY(0);
+            -ms-transform: scaleY(0);
+             -o-transform: scaleY(0);
+                transform: scaleY(0); }
+      .Header__leftContainer__32s-O.Header__leftOpen__4fsRJ {
+        -webkit-transform: scaleY(1);
+           -moz-transform: scaleY(1);
+            -ms-transform: scaleY(1);
+             -o-transform: scaleY(1);
+                transform: scaleY(1); } }
+
+.Header__rightContainer__8j6KC {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-justify-content: space-around;
+      -ms-flex-pack: distribute;
+          justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+     -moz-box-align: center;
+      -ms-flex-align: center;
+          align-items: center; }
+
+.Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__phoneNumber___YX8_ {
+  font-size: 24px; }
+
+.Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__hamburger__Zwus2 {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 25px;
+  width: 25px;
+  margin: auto !important;
+  margin-right: 20px !important;
+  display: none; }
+  .Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__hamburger__Zwus2 .Header__hamBar__3Z1fC {
+    width: 90%;
+    height: 2px;
+    margin: 5px auto;
+    background-color: white; }
+
+@media (min-width: 897px) {
+  .Header__container__2Ypgr .Header__rightContainer__8j6KC > * {
+    display: initial; }
+  .Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__hamburger__Zwus2 {
+    display: none; } }
+
+@media (max-width: 896px) {
+  .Header__container__2Ypgr .Header__rightContainer__8j6KC > * {
+    display: none; }
+  .Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__hamburger__Zwus2 {
+    display: block; } }
+
+.Header__container__2Ypgr .Header__rightContainer__8j6KC > * {
+  margin: 0 20px;
+  font-size: 18px; }
+  @media (max-width: 1299px) {
+    .Header__container__2Ypgr .Header__rightContainer__8j6KC > * {
+      margin: 0 10px; } }
+  @media (max-width: 896px) {
+    .Header__container__2Ypgr .Header__rightContainer__8j6KC > * {
+      margin: 0 5px;
+      font-size: 14px; } }
+
+.Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__location__22LrL {
+  color: #ffffff; }
+
+.Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__userStatus__1toNo {
+  color: #ffffff;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  text-decoration: none; }
+  .Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__userStatus__1toNo:not(:disabled) {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    cursor: pointer; }
+  .Header__container__2Ypgr .Header__rightContainer__8j6KC .Header__userStatus__1toNo:disabled {
+    pointer-events: none;
+    color: grey; }
+/**
+	*
+	*		Only Put Sass variables and mixins here
+	*
+	*/
+.GameBoard__container__2WYjT {
+  width: 100%; }
+/**
+	*
+	*		Only Put Sass variables and mixins here
+	*
+	*/
+.Preferences__container__3HeTI {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap; }
+
+.Preferences__previewContainer__1-Ott {
+  padding: 10px; }
+  .Preferences__previewContainer__1-Ott.Preferences__selected__24K0l, .Preferences__previewContainer__1-Ott:hover {
+    background-color: #2f7dbf; }
+
+.Preferences__canvas__3WMKv {
+  display: block; }
+/**
+	*
+	*		Only Put Sass variables and mixins here
+	*
+	*/
+ {
+  /**
+	*
+	*		Only put styles here that should EFFECT EVERYTHING here
+	*		These styles are NOT localized
+	*/ }
+  body.body-locked {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden; }
+  body {
+    margin: 0;
+    font-family: 'Signika', sans-serif; }
+    body .mainContent {
+      position: relative;
+      background-color: white;
+      color: #414042;
+      height: 100%;
+      min-height: -webkit-calc(100vh - 50px);
+      min-height: -moz-calc(100vh - 50px);
+      min-height: calc(100vh - 50px); }

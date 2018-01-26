@@ -1,0 +1,18 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.previewContainer {
+  padding: $padding;
+
+  &.selected,
+  &:hover {
+    background-color: $color_top_panel;
+  }
+}
+
+.canvas {
+  display: block;
+}

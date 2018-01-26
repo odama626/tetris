@@ -1,0 +1,22 @@
+.container {
+	width: 100%;
+
+	table {
+		width: 100%;
+		border-collapse: collapse;
+
+		th {
+			border-bottom: 1px solid black;
+		}
+		th, td {
+			padding: $padding;
+		}
+
+		tr:hover {
+			background-color: $color_control_background;
+		}
+		th:hover {
+			background-color: $color_page_background;
+		}
+	}
+}

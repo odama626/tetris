@@ -1,0 +1,57 @@
+.container {
+	position: relative;
+	padding-right: $padding*2 !important;
+	&:after {
+		content: '';
+		top: 40%;
+		right: 5px;
+		position: absolute;
+		border-color: $color_text_light;
+		border-top: 5px dashed;
+		border-right: 5px solid transparent;
+		border-left: 5px solid transparent;
+		transition: transform 250ms ease-in-out;
+	}
+
+	.shade {
+		@include overlay;
+	}
+
+	&.containerOpen:after {transform: rotateZ(-90deg);}
+	.open, .closed {
+		opacity: 1;
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		background-color: $color_dark_primary;
+		margin-top: 29px;
+		@include CardContainer;
+		border-top: 2px solid $color_accent_blue_ondark;
+		transition: all	150ms ease-in-out;
+		transform: scaleY(1);
+		transform-origin: top;
+	}
+	.closed {
+		opacity: 0;
+		transform: scaleY(0);
+	}
+}
+
+@media (max-width: $quote_max_phone) {
+	.container {
+		font-size: 18px;
+		&:after {
+			display: none;
+		}
+		.shade {
+			display: none;
+		}
+	}
+	.open, .closed {
+		opacity: 1;
+		position: static;
+		font-size: 16px;
+		transform: scaleY(1);
+		margin: 0;
+	}
+}

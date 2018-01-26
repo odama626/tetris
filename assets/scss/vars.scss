@@ -1,0 +1,213 @@
+/**
+	*
+	*		Only Put Sass variables and mixins here
+	*
+	*/
+
+$color_top_panel: #2f7dbf;
+$color_dark_primary: #2a2d33;
+$color_accent_blue: #007aff;
+
+$color_disabled: grey;
+
+$color_shade: rgba(0, 0, 0, 0.2);
+
+// Text colors
+$color_text_light: #ffffff;
+// $color_text_muted: #939598;
+$color_text_dark: #414042;
+
+// Spacings
+$padding: 10px;
+$header-height: 50px;
+
+// breakpoints
+
+$quote_max_tablet: 1299px;
+$quote_max_phone: 896px;
+
+// Custom icons
+
+@mixin FaClose {
+  width: 1.5em;
+  &:before {
+    content: '\00d7';
+    font-family: FontAwesome;
+    font-size: 28px;
+    left: 0;
+    position: absolute;
+  }
+}
+
+@mixin overlay {
+  position: fixed;
+  top: $header-height;
+  @media (max-width: $quote_max_phone) {
+    top: $header-height - 10px;
+  }
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $color_shade;
+}
+
+@mixin position($top, $right: $top, $bottom: $top, $left: $right) {
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}
+
+@mixin iconBefore($url, $size: $text_icon_size) {
+  position: relative;
+  padding-left: calc(#{$size} + #{$padding});
+  &:before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    content: ' ';
+    background-image: url($url);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: $size;
+    height: $size;
+    margin: auto;
+  }
+}
+
+@mixin iconAfter($url, $size: $text_icon_size) {
+  position: relative;
+  &:after {
+    position: absolute;
+    right: - $size - $padding;
+    top: 0;
+    bottom: 0;
+    content: ' ';
+    background-image: url($url);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: $size;
+    height: $size;
+    margin: auto;
+  }
+}
+
+// Button Styles
+
+@mixin Clickable {
+  user-select: none;
+  cursor: pointer;
+}
+
+@mixin StaticButton($color: $color_text_light, $color2: $color_accent_blue, $solidBackground:true) {
+  color: $color;
+  padding: $padding/2 $padding*2;
+  border-radius: 2px;
+  @if $solidBackground {
+    background-color: $color2;
+  } @else {
+    background-color: transparent;
+  }
+  border-width: 1px;
+  border-style: solid;
+  border-color: $color2;
+  user-select: none;
+
+  &:disabled {
+    pointer-events: none;
+    background-color: $color_disabled;
+    color: lighten($color, 20%);
+  }
+
+  &:not(:disabled) {
+    @include Clickable;
+  }
+}
+
+// Button(text Color, background color, solid background or transparent)
+@mixin Button($color: $color_text_light, $color2: $color_accent_blue, $solidBackground:true) {
+  @include StaticButton($color, $color2, $solidBackground);
+
+  &:not(:disabled) {
+    &:hover {
+      color: $color2;
+      background-color: $color;
+      border: 1px solid $color2;
+    }
+  }
+}
+
+@mixin LinkButton($color: $color_accent_blue) {
+  color: $color;
+  user-select: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  &:not(:disabled) {
+    @include Clickable;
+    &:hover {
+      // font-weight: $font_weight_subheading;
+    }
+  }
+  &:disabled {
+    pointer-events: none;
+    color: $color_disabled;
+  }
+}
+
+@mixin hideFunctionality {
+  opacity: 0;
+  color: rgba(0, 0, 0, 0);
+  user-select: none;
+  pointer-events: none;
+}
+
+// Container Styles
+@mixin CardContainer() {
+  box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.2);
+  // border: solid 1px $color_light_border;
+  border: solid 1px $color_control_background_dark;
+}
+
+@mixin besideFloatingPanel() {
+  @media (min-width: $quote_max_tablet + 1px) {
+    margin-right: $floating_panel_width + 2px;
+  }
+}
+
+@mixin trSeperator {
+  border-top: 1px solid #848bb0;
+  // box-shadow: 0px -2px 2px rgba(34,34,34,0.6);
+  // border-top: 1px solid;
+  // border-image: linear-gradient(90deg, white, 1%, white, 1%, red, 99% red, white);
+  // border-image: linear-gradient(to right, black, rgba(0, 0, 0, 0)) 1 100%;
+}
+
+@mixin drawMinus($color: $color_text_light, $lineLength: $padding*2) {
+  &:before {
+    content: ' ';
+    position: absolute;
+    @include position(0);
+    width: $lineLength;
+    height: 2px;
+    margin: auto;
+    background-color: $color;
+  }
+}
+
+@mixin drawPlus($color: $color_text_light, $lineLength: $padding*2) {
+  @include drawMinus($color, $lineLength);
+  &:after {
+    content: ' ';
+    position: absolute;
+    @include position(0);
+    height: $lineLength;
+    width: 2px;
+    margin: auto;
+    background-color: $color;
+  }
+}

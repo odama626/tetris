@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "jsx": "react",
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "baseUrl": "./",
+    "lib": ["es6", "dom"],
+    "paths": {
+      "web-components": ["assets/components/web-components/components"]
+    }
+  },
+  "exclude": ["node_modules", "assets/components/web-components/node_modules"]
+}

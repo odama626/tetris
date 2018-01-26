@@ -1,0 +1,28 @@
+:global {
+  /**
+	*
+	*		Only put styles here that should EFFECT EVERYTHING here
+	*		These styles are NOT localized
+	*/
+
+  body.body-locked {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Signika', sans-serif;
+
+    .mainContent {
+      position: relative;
+      background-color: white; //$color_container_background;
+      color: $color_text_dark;
+      height: 100%;
+      min-height: calc(100vh - #{$header-height});
+    }
+  }
+
+  /////////
+}
