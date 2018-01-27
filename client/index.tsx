@@ -6,11 +6,16 @@ import { ConnectedRouter } from 'react-router-redux';
 import createStore from '../assets/components/Store';
 import { Provider } from 'react-redux';
 import DefaultInput from './DefaultInput';
+import { loadAndMerge, replaceArrOnMerge } from '../assets/utils/LocalStorage';
 
 declare var module;
 declare var window;
 
-const preloadedState = window.__preload_state__;
+const preloadedState = loadAndMerge(
+  ENV.STORAGE_NAMESPACE,
+  window.__preload_state__,
+  replaceArrOnMerge
+);
 delete window.__preload_state__;
 
 const { store, history } = createStore(preloadedState);

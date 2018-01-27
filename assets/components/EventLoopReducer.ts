@@ -1,9 +1,9 @@
 export class Actions {
-  public static START = 'GAME_LOOP_START';
-  public static STOP = 'GAME_LOOP_STOP';
-  public static PAUSE = 'GAME_LOOP_PAUSE';
-  public static RESUME = 'GAME_LOOP_RESUME';
-  public static UPDATE = 'GAME_LOOP_UPDATE';
+  public static START = 'EVENT_LOOP_START';
+  public static STOP = 'EVENT_LOOP_STOP';
+  public static PAUSE = 'EVENT_LOOP_PAUSE';
+  public static RESUME = 'EVENT_LOOP_RESUME';
+  public static UPDATE = 'EVENT_LOOP_UPDATE';
 
   public static start(draw) {
     return (dispatch, getState) => {
@@ -30,7 +30,7 @@ export class Actions {
 }
 
 const loop = (dispatch, getState) => {
-  const { lastTick, paused, active, tickRate, draw } = getState().GameLoop;
+  const { lastTick, paused, active, tickRate, draw } = getState().EventLoop;
   if (paused || !active) return;
   let now = Date.now();
   let delta = now - lastTick;

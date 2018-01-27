@@ -1,5 +1,9 @@
 .container {
   width: 100%;
+  padding: $padding;
+}
+
+.optionContainer {
   display: flex;
   flex-wrap: wrap;
 }
@@ -7,9 +11,9 @@
 .previewContainer {
   padding: $padding;
 
-  &.selected,
-  &:hover {
+  &.selected {
     background-color: $color_top_panel;
+    color: white;
   }
 }
 

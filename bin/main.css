@@ -261,6 +261,9 @@ h1.Header__navItem__2gjN8 {
 	*/
 .Preferences__container__3HeTI {
   width: 100%;
+  padding: 10px; }
+
+.Preferences__optionContainer__WwSTG {
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
@@ -272,8 +275,9 @@ h1.Header__navItem__2gjN8 {
 
 .Preferences__previewContainer__1-Ott {
   padding: 10px; }
-  .Preferences__previewContainer__1-Ott.Preferences__selected__24K0l, .Preferences__previewContainer__1-Ott:hover {
-    background-color: #2f7dbf; }
+  .Preferences__previewContainer__1-Ott.Preferences__selected__24K0l {
+    background-color: #2f7dbf;
+    color: white; }
 
 .Preferences__canvas__3WMKv {
   display: block; }

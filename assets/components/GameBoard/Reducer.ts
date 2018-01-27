@@ -1,6 +1,6 @@
 import generateTetrimino, { COLORTABLE } from '../Canvas/Tetriminos';
 import * as Actions from './Actions';
-import { Actions as GameLoopActions } from '../GameLoopReducer';
+import { Actions as EventLoop } from '../EventLoopReducer';
 import {
   addCanvasController,
   swapHold,
@@ -31,13 +31,7 @@ export const initialState = () => ({
     hold: null
   },
   tetriminoJustGenerated: false,
-  score: { best: 0, current: 0, last: 0 },
-  style: {
-    drawShadow: true,
-    colorTable: COLORTABLE['tigrana'],
-    clearColor: '#000',
-    canvas: { shadowBlur: '1', shadowColor: 'black' }
-  }
+  score: { best: 0, current: 0, last: 0 }
 });
 
 export default (state = initialState(), action) => {
@@ -53,7 +47,7 @@ export default (state = initialState(), action) => {
       };
     case Actions.SET_CONTROLLER:
       return addCanvasController(state, action);
-    case GameLoopActions.UPDATE:
+    case EventLoop.UPDATE:
       return update({
         ...state,
         now: action.now,

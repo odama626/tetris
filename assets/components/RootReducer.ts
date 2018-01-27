@@ -5,7 +5,8 @@ import Login from './Login/Reducer';
 import Header from './Header/Reducer';
 import Home from './Home/Reducer';
 import GameBoard from './GameBoard/Reducer';
-import GameLoop from './GameLoopReducer';
+import EventLoop from './EventLoopReducer';
+import Preferences from './Preferences/Reducer';
 
 const initialWindowState = {
   width: ENV.BUILD_TARGET === 'client' ? window.innerWidth : 0,
@@ -70,6 +71,7 @@ export default combineReducers({
   Header,
   Home,
   GameBoard,
-  GameLoop,
-  router: routerReducer
+  EventLoop,
+  router: routerReducer,
+  Preferences
 });

@@ -2,21 +2,24 @@ import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import { routerMiddleware } from 'react-router-redux';
 import createBrowserHistory from 'history/createBrowserHistory';
 import createMemoryHistory from 'history/createMemoryHistory';
+import { Actions as EventLoop } from './EventLoopReducer';
 import thunk from 'redux-thunk';
 
 import RootReducer, { attachResizeListener } from './RootReducer';
 import { Format } from '../utils/Utils';
 import Rest from '../utils/Rest';
+import LocalStorage, { replaceArrOnMerge } from '../utils/LocalStorage';
 
-let mw = [Rest, thunk];
+let localStorage = LocalStorage(ENV.STORAGE_NAMESPACE, replaceArrOnMerge);
+
+let mw = [Rest, localStorage, thunk];
 
 // Add logging to dev environment
 if (ENV.DEPLOY_TARGET === ENV.TARGET_DEV) {
   const logger = store => next => action => {
-    if (action.type !== 'GAME_LOOP_UPDATE') console.log('dispatching', action);
+    if (action.type !== EventLoop.UPDATE) console.log('dispatching', action);
     let result = next(action);
-    if (action.type !== 'GAME_LOOP_UPDATE')
-      console.log('next state', store.getState());
+    if (action.type !== EventLoop.UPDATE) console.log('next state', store.getState());
     return result;
   };
 
@@ -41,10 +44,7 @@ const titleSetter = store => next => action => {
 mw = [...mw, titleSetter];
 
 export default (preloadedState = {}) => {
-  const history =
-    ENV.BUILD_TARGET === 'client'
-      ? createBrowserHistory()
-      : createMemoryHistory();
+  const history = ENV.BUILD_TARGET === 'client' ? createBrowserHistory() : createMemoryHistory();
   const middleware = applyMiddleware(...mw, routerMiddleware(history));
   const store = createStore(RootReducer, preloadedState, middleware);
   attachResizeListener(store);

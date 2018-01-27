@@ -3,7 +3,7 @@ import Canvas from '../Canvas/Canvas';
 import { connect, Dispatch } from 'react-redux';
 import * as sass from './GameBoard.scss';
 import * as Actions from './Actions';
-import { Actions as GameLoop } from '../GameLoopReducer';
+import { Actions as EventLoop } from '../EventLoopReducer';
 import { compareWith } from '../../utils/Utils';
 
 // Types
@@ -19,11 +19,11 @@ class GameBoard extends React.Component<any, {}> {
     'gameOver'
   );
   componentDidMount() {
-    setTimeout(() => this.props.dispatch(GameLoop.start(this.draw.bind(this))), 0);
+    setTimeout(() => this.props.dispatch(EventLoop.start(this.draw.bind(this))), 0);
   }
 
   componentWillUnmount() {
-    this.props.dispatch(GameLoop.pause());
+    this.props.dispatch(EventLoop.pause());
   }
 
   shouldComponentUpdate(nextProps) {
@@ -32,14 +32,15 @@ class GameBoard extends React.Component<any, {}> {
 
   componentDidUpdate() {
     if (this.props.gameOver) {
-      this.props.dispatch(GameLoop.stop());
+      this.props.dispatch(EventLoop.stop());
       this.props.dispatch(Actions.gameOver());
     }
   }
 
   draw() {
-    const { pos, arena, tetriminos: { current, next, hold }, style: { drawShadow } } = this.props;
+    const { pos, arena, tetriminos: { current, next, hold } } = this.props;
     const { next: nextController, hold: holdController } = this.props.canvasControllers;
+    const { canvasStyle: { drawShadow } } = this.props.preferences;
 
     arena.clear();
     if (drawShadow) {
@@ -66,12 +67,14 @@ class GameBoard extends React.Component<any, {}> {
   }
 
   render() {
-    const { dispatch, style, score, arena, canvasControllers } = this.props;
+    const { dispatch, score, arena, canvasControllers } = this.props;
+    const { canvasStyle } = this.props.preferences;
+
     return (
       <div className={sass.container}>
         <div>
           <Canvas
-            style={style}
+            style={canvasStyle}
             width={70}
             height={70}
             scale={10}
@@ -79,7 +82,7 @@ class GameBoard extends React.Component<any, {}> {
             setController={controller => dispatch(Actions.setController('next', controller))}
           />
           <Canvas
-            style={style}
+            style={canvasStyle}
             width={70}
             height={70}
             scale={10}
@@ -89,7 +92,7 @@ class GameBoard extends React.Component<any, {}> {
         </div>
         <div>
           <Canvas
-            style={style}
+            style={canvasStyle}
             width={200}
             height={400}
             mountController={arena}
@@ -101,4 +104,6 @@ class GameBoard extends React.Component<any, {}> {
   }
 }
 
-export default connect(state => ({ ...state.GameBoard }))(GameBoard);
+export default connect(state => ({ ...state.GameBoard, preferences: state.Preferences }))(
+  GameBoard
+);

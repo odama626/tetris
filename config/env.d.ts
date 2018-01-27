@@ -12,6 +12,9 @@ declare var ENV: {
   authToken: string;
   port: number;
 
+  // Local Storage namespace
+  STORAGE_NAMESPACE: string;
+
   // Client or server
   BUILD_TARGET: string;
 

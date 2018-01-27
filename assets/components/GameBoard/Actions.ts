@@ -43,4 +43,4 @@ export const setColorTable = colorTable => ({
   colorTable
 });
 
-export const gameOver = () => ({ type: GAME_OVER });
+export const gameOver = () => ({ type: GAME_OVER, saveLocally: ['GameBoard', 'score'] });

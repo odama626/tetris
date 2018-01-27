@@ -20,7 +20,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "62ec3303c26b14285515"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "2343d6eac3f8643e7636"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -931,6 +931,83 @@ exports.COLORTABLE = {
 
 /***/ }),
 
+/***/ "./assets/components/EventLoopReducer.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __rest = this && this.__rest || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0) t[p[i]] = s[p[i]];
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+class Actions {
+    static start(draw) {
+        return (dispatch, getState) => {
+            dispatch({ type: Actions.START, draw });
+            loop(dispatch, getState);
+        };
+    }
+    static pause() {
+        return { type: Actions.PAUSE };
+    }
+    static update(delta, now) {
+        return {
+            type: Actions.UPDATE,
+            delta,
+            now
+        };
+    }
+    static stop() {
+        return { type: Actions.STOP };
+    }
+}
+Actions.START = 'EVENT_LOOP_START';
+Actions.STOP = 'EVENT_LOOP_STOP';
+Actions.PAUSE = 'EVENT_LOOP_PAUSE';
+Actions.RESUME = 'EVENT_LOOP_RESUME';
+Actions.UPDATE = 'EVENT_LOOP_UPDATE';
+exports.Actions = Actions;
+const loop = (dispatch, getState) => {
+    const { lastTick, paused, active, tickRate, draw } = getState().EventLoop;
+    if (paused || !active) return;
+    let now = Date.now();
+    let delta = now - lastTick;
+    if (delta > 10) {
+        dispatch(Actions.update(delta, now));
+    }
+    window.requestAnimationFrame(() => loop(dispatch, getState));
+    draw();
+};
+const initialTick = Date.now();
+const initialState = {
+    lastTick: initialTick,
+    paused: true,
+    active: false,
+    draw: _ => _,
+    timerHandle: null
+};
+exports.default = (state = initialState, _a) => {
+    var { type } = _a,
+        actions = __rest(_a, ["type"]);
+    switch (type) {
+        case Actions.START:
+            return Object.assign({}, state, actions, { paused: false, active: true });
+        case Actions.UPDATE:
+            return Object.assign({}, state, { lastTick: actions.now });
+        case Actions.STOP:
+            return Object.assign({}, state, { paused: false, active: false });
+        case Actions.PAUSE:
+            return Object.assign({}, state, { paused: true });
+    }
+    return state;
+};
+
+/***/ }),
+
 /***/ "./assets/components/GameBoard/Actions.ts":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -974,7 +1051,7 @@ exports.setColorTable = colorTable => ({
     type: exports.SET_COLORTABLE,
     colorTable
 });
-exports.gameOver = () => ({ type: exports.GAME_OVER });
+exports.gameOver = () => ({ type: exports.GAME_OVER, saveLocally: ['GameBoard', 'score'] });
 
 /***/ }),
 
@@ -998,7 +1075,7 @@ const Canvas_1 = __webpack_require__("./assets/components/Canvas/Canvas.tsx");
 const react_redux_1 = __webpack_require__("react-redux");
 const sass = __webpack_require__("./assets/components/GameBoard/GameBoard.scss");
 const Actions = __webpack_require__("./assets/components/GameBoard/Actions.ts");
-const GameLoopReducer_1 = __webpack_require__("./assets/components/GameLoopReducer.ts");
+const EventLoopReducer_1 = __webpack_require__("./assets/components/EventLoopReducer.ts");
 const Utils_1 = __webpack_require__("./assets/utils/Utils.ts");
 class GameBoard extends React.Component {
     constructor() {
@@ -1006,23 +1083,24 @@ class GameBoard extends React.Component {
         this.importantPropsMatch = Utils_1.compareWith('arena', 'gameInProgress', 'score', 'tetriminos', 'gameOver');
     }
     componentDidMount() {
-        setTimeout(() => this.props.dispatch(GameLoopReducer_1.Actions.start(this.draw.bind(this))), 0);
+        setTimeout(() => this.props.dispatch(EventLoopReducer_1.Actions.start(this.draw.bind(this))), 0);
     }
     componentWillUnmount() {
-        this.props.dispatch(GameLoopReducer_1.Actions.pause());
+        this.props.dispatch(EventLoopReducer_1.Actions.pause());
     }
     shouldComponentUpdate(nextProps) {
         return !this.importantPropsMatch(this.props, nextProps);
     }
     componentDidUpdate() {
         if (this.props.gameOver) {
-            this.props.dispatch(GameLoopReducer_1.Actions.stop());
+            this.props.dispatch(EventLoopReducer_1.Actions.stop());
             this.props.dispatch(Actions.gameOver());
         }
     }
     draw() {
-        const { pos, arena, tetriminos: { current, next, hold }, style: { drawShadow } } = this.props;
+        const { pos, arena, tetriminos: { current, next, hold } } = this.props;
         const { next: nextController, hold: holdController } = this.props.canvasControllers;
+        const { canvasStyle: { drawShadow } } = this.props.preferences;
         arena.clear();
         if (drawShadow) {
             arena.drawShadow(current, pos, (context, x, y, color) => {
@@ -1045,11 +1123,12 @@ class GameBoard extends React.Component {
         holdController.write('Hold');
     }
     render() {
-        const { dispatch, style, score, arena, canvasControllers } = this.props;
-        return React.createElement("div", { className: sass.container }, React.createElement("div", null, React.createElement(Canvas_1.default, { style: style, width: 70, height: 70, scale: 10, mountController: canvasControllers.next, setController: controller => dispatch(Actions.setController('next', controller)) }), React.createElement(Canvas_1.default, { style: style, width: 70, height: 70, scale: 10, mountController: canvasControllers.hold, setController: controller => dispatch(Actions.setController('hold', controller)) })), React.createElement("div", null, React.createElement(Canvas_1.default, { style: style, width: 200, height: 400, mountController: arena, setController: controller => dispatch(Actions.setArenaController('arena', controller)) })));
+        const { dispatch, score, arena, canvasControllers } = this.props;
+        const { canvasStyle } = this.props.preferences;
+        return React.createElement("div", { className: sass.container }, React.createElement("div", null, React.createElement(Canvas_1.default, { style: canvasStyle, width: 70, height: 70, scale: 10, mountController: canvasControllers.next, setController: controller => dispatch(Actions.setController('next', controller)) }), React.createElement(Canvas_1.default, { style: canvasStyle, width: 70, height: 70, scale: 10, mountController: canvasControllers.hold, setController: controller => dispatch(Actions.setController('hold', controller)) })), React.createElement("div", null, React.createElement(Canvas_1.default, { style: canvasStyle, width: 200, height: 400, mountController: arena, setController: controller => dispatch(Actions.setArenaController('arena', controller)) })));
     }
 }
-exports.default = react_redux_1.connect(state => Object.assign({}, state.GameBoard))(GameBoard);
+exports.default = react_redux_1.connect(state => Object.assign({}, state.GameBoard, { preferences: state.Preferences }))(GameBoard);
 
 /***/ }),
 
@@ -1062,7 +1141,7 @@ exports.default = react_redux_1.connect(state => Object.assign({}, state.GameBoa
 Object.defineProperty(exports, "__esModule", { value: true });
 const Tetriminos_1 = __webpack_require__("./assets/components/Canvas/Tetriminos.ts");
 const Actions = __webpack_require__("./assets/components/GameBoard/Actions.ts");
-const GameLoopReducer_1 = __webpack_require__("./assets/components/GameLoopReducer.ts");
+const EventLoopReducer_1 = __webpack_require__("./assets/components/EventLoopReducer.ts");
 const UpdateLogic_1 = __webpack_require__("./assets/components/GameBoard/UpdateLogic.ts");
 exports.initialState = () => ({
     lastTick: 0,
@@ -1083,13 +1162,7 @@ exports.initialState = () => ({
         hold: null
     },
     tetriminoJustGenerated: false,
-    score: { best: 0, current: 0, last: 0 },
-    style: {
-        drawShadow: true,
-        colorTable: Tetriminos_1.COLORTABLE['tigrana'],
-        clearColor: '#000',
-        canvas: { shadowBlur: '1', shadowColor: 'black' }
-    }
+    score: { best: 0, current: 0, last: 0 }
 });
 exports.default = (state = exports.initialState(), action) => {
     switch (action.type) {
@@ -1100,7 +1173,7 @@ exports.default = (state = exports.initialState(), action) => {
                 } });
         case Actions.SET_CONTROLLER:
             return UpdateLogic_1.addCanvasController(state, action);
-        case GameLoopReducer_1.Actions.UPDATE:
+        case EventLoopReducer_1.Actions.UPDATE:
             return UpdateLogic_1.update(Object.assign({}, state, { now: action.now, delta: action.now - state.lastTick, tetriminoJustGenerated: false }));
         case Actions.DROP:
             let now = Date.now();
@@ -1223,83 +1296,6 @@ exports.drop = state => {
     if (gameOver) console.error('Game Over');
     return Object.assign({}, state, { lastTick: now, score: Object.assign({}, score, updateScore(score, linesCleared, lastLines)), allowSwap: true, tetriminos: nextMinos, pos,
         gameOver, tetriminoJustGenerated: true, gameInProgress: !gameOver });
-};
-
-/***/ }),
-
-/***/ "./assets/components/GameLoopReducer.ts":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var __rest = this && this.__rest || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0) t[p[i]] = s[p[i]];
-    return t;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-class Actions {
-    static start(draw) {
-        return (dispatch, getState) => {
-            dispatch({ type: Actions.START, draw });
-            loop(dispatch, getState);
-        };
-    }
-    static pause() {
-        return { type: Actions.PAUSE };
-    }
-    static update(delta, now) {
-        return {
-            type: Actions.UPDATE,
-            delta,
-            now
-        };
-    }
-    static stop() {
-        return { type: Actions.STOP };
-    }
-}
-Actions.START = 'GAME_LOOP_START';
-Actions.STOP = 'GAME_LOOP_STOP';
-Actions.PAUSE = 'GAME_LOOP_PAUSE';
-Actions.RESUME = 'GAME_LOOP_RESUME';
-Actions.UPDATE = 'GAME_LOOP_UPDATE';
-exports.Actions = Actions;
-const loop = (dispatch, getState) => {
-    const { lastTick, paused, active, tickRate, draw } = getState().GameLoop;
-    if (paused || !active) return;
-    let now = Date.now();
-    let delta = now - lastTick;
-    if (delta > 10) {
-        dispatch(Actions.update(delta, now));
-    }
-    window.requestAnimationFrame(() => loop(dispatch, getState));
-    draw();
-};
-const initialTick = Date.now();
-const initialState = {
-    lastTick: initialTick,
-    paused: true,
-    active: false,
-    draw: _ => _,
-    timerHandle: null
-};
-exports.default = (state = initialState, _a) => {
-    var { type } = _a,
-        actions = __rest(_a, ["type"]);
-    switch (type) {
-        case Actions.START:
-            return Object.assign({}, state, actions, { paused: false, active: true });
-        case Actions.UPDATE:
-            return Object.assign({}, state, { lastTick: actions.now });
-        case Actions.STOP:
-            return Object.assign({}, state, { paused: false, active: false });
-        case Actions.PAUSE:
-            return Object.assign({}, state, { paused: true });
-    }
-    return state;
 };
 
 /***/ }),
@@ -1547,7 +1543,7 @@ exports.default = Main;
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-module.exports = {"container":"Preferences__container__3HeTI","previewContainer":"Preferences__previewContainer__1-Ott","selected":"Preferences__selected__24K0l","canvas":"Preferences__canvas__3WMKv"};
+module.exports = {"container":"Preferences__container__3HeTI","optionContainer":"Preferences__optionContainer__WwSTG","previewContainer":"Preferences__previewContainer__1-Ott","selected":"Preferences__selected__24K0l","canvas":"Preferences__canvas__3WMKv"};
 
 /***/ }),
 
@@ -1563,25 +1559,74 @@ const react_redux_1 = __webpack_require__("react-redux");
 const Tetriminos_1 = __webpack_require__("./assets/components/Canvas/Tetriminos.ts");
 const Canvas_1 = __webpack_require__("./assets/components/Canvas/Canvas.tsx");
 const style = __webpack_require__("./assets/components/Preferences/Preferences.scss");
+const Reducer_1 = __webpack_require__("./assets/components/Preferences/Reducer.ts");
 class Preferences extends React.Component {
-    drawCanvas(colorProfile, i, selected) {
-        const { canvasStyle } = this.props;
-        return React.createElement("div", {
-            // onClick={() => dispatch()}
-            className: style.previewContainer + ' ' + (Tetriminos_1.arraysAreEqual(selected, Tetriminos_1.COLORTABLE[colorProfile]) ? style.selected : ''), key: i }, React.createElement(Canvas_1.default, { className: style.canvas, width: 80, height: 140, style: Object.assign({}, canvasStyle, { colorTable: Tetriminos_1.COLORTABLE[colorProfile] }), setController: controller => {
+    drawCanvas(colorProfile, i, selectedColorProfile) {
+        const { canvasStyle, dispatch } = this.props;
+        const selected = Tetriminos_1.arraysAreEqual(selectedColorProfile, Tetriminos_1.COLORTABLE[colorProfile]);
+        if (selected) {
+            console.log(colorProfile);
+        }
+        return React.createElement("div", { onClick: () => dispatch(Reducer_1.Actions.setColorTable(Tetriminos_1.COLORTABLE[colorProfile])), className: `${style.previewContainer} ${selected ? style.selected : ''}`, key: i }, React.createElement(Canvas_1.default, { className: style.canvas, width: 80, height: 140, style: Object.assign({}, canvasStyle, { colorTable: Tetriminos_1.COLORTABLE[colorProfile] }), setController: controller => {
                 controller.clear();
                 controller.draw(Tetriminos_1.PreviewMatrix);
             } }), React.createElement("span", null, colorProfile));
     }
     render() {
         let keys = Object.keys(Tetriminos_1.COLORTABLE);
-        console.log(this.props);
-        const { colorTable } = this.props.canvasStyle;
-        console.log(style.previewContainer);
-        return React.createElement("div", { className: style.container }, keys.map((key, i) => this.drawCanvas(key, i, colorTable)));
+        const { dispatch } = this.props;
+        const { colorTable, drawShadow } = this.props.canvasStyle;
+        return React.createElement("div", { className: style.container }, React.createElement("h2", null, "Tetrimino Colors"), React.createElement("div", { className: style.optionContainer }, keys.map((key, i) => this.drawCanvas(key, i, colorTable))), React.createElement("label", null, "Show Shadow"), React.createElement("input", { type: "checkbox", checked: drawShadow, onChange: e => dispatch(Reducer_1.Actions.drawShadow(e.target.checked)) }));
     }
 }
-exports.default = react_redux_1.connect(state => ({ canvasStyle: state.GameBoard.style }))(Preferences);
+exports.default = react_redux_1.connect(state => Object.assign({}, state.Preferences))(Preferences);
+
+/***/ }),
+
+/***/ "./assets/components/Preferences/Reducer.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const Tetriminos_1 = __webpack_require__("./assets/components/Canvas/Tetriminos.ts");
+class Actions {
+    static setColorTable(colorTable) {
+        return {
+            type: Actions.SET_COLOR_TABLE,
+            colorTable,
+            saveLocally: ['Preferences', 'canvasStyle', 'colorTable']
+        };
+    }
+    static drawShadow(drawShadow) {
+        return {
+            type: Actions.DRAW_SHADOW,
+            drawShadow,
+            saveLocally: ['Preferences', 'canvasStyle', 'drawShadow']
+        };
+    }
+}
+Actions.SET_COLOR_TABLE = 'PREFERENCES_SET_COLOR_TABLE';
+Actions.DRAW_SHADOW = 'PREFERENCES_SET_DRAW_SHADOW';
+exports.Actions = Actions;
+const initialState = {
+    canvasStyle: {
+        drawShadow: false,
+        colorTable: Tetriminos_1.COLORTABLE['tigrana'],
+        clearColor: '#000',
+        canvas: { shadowBlur: '1', shadowColor: 'black' }
+    }
+};
+exports.default = (state = initialState, action) => {
+    switch (action.type) {
+        case Actions.SET_COLOR_TABLE:
+            return Object.assign({}, state, { canvasStyle: Object.assign({}, state.canvasStyle, { colorTable: action.colorTable }) });
+        case Actions.DRAW_SHADOW:
+            return Object.assign({}, state, { canvasStyle: Object.assign({}, state.canvasStyle, { drawShadow: action.drawShadow }) });
+    }
+    return state;
+};
 
 /***/ }),
 
@@ -1598,7 +1643,8 @@ const Reducer_1 = __webpack_require__("./assets/components/Login/Reducer.ts");
 const Reducer_2 = __webpack_require__("./assets/components/Header/Reducer.ts");
 const Reducer_3 = __webpack_require__("./assets/components/Home/Reducer.ts");
 const Reducer_4 = __webpack_require__("./assets/components/GameBoard/Reducer.ts");
-const GameLoopReducer_1 = __webpack_require__("./assets/components/GameLoopReducer.ts");
+const EventLoopReducer_1 = __webpack_require__("./assets/components/EventLoopReducer.ts");
+const Reducer_5 = __webpack_require__("./assets/components/Preferences/Reducer.ts");
 const initialWindowState = {
     width:  false ? window.innerWidth : 0,
     height:  false ? window.innerHeight : 0,
@@ -1657,8 +1703,9 @@ exports.default = redux_1.combineReducers({
     Header: Reducer_2.default,
     Home: Reducer_3.default,
     GameBoard: Reducer_4.default,
-    GameLoop: GameLoopReducer_1.default,
-    router: react_router_redux_1.routerReducer
+    EventLoop: EventLoopReducer_1.default,
+    router: react_router_redux_1.routerReducer,
+    Preferences: Reducer_5.default
 });
 
 /***/ }),
@@ -1674,17 +1721,20 @@ const redux_1 = __webpack_require__("redux");
 const react_router_redux_1 = __webpack_require__("react-router-redux");
 const createBrowserHistory_1 = __webpack_require__("history/createBrowserHistory");
 const createMemoryHistory_1 = __webpack_require__("history/createMemoryHistory");
+const EventLoopReducer_1 = __webpack_require__("./assets/components/EventLoopReducer.ts");
 const redux_thunk_1 = __webpack_require__("redux-thunk");
 const RootReducer_1 = __webpack_require__("./assets/components/RootReducer.ts");
 const Utils_1 = __webpack_require__("./assets/utils/Utils.ts");
 const Rest_1 = __webpack_require__("./assets/utils/Rest.ts");
-let mw = [Rest_1.default, redux_thunk_1.default];
+const LocalStorage_1 = __webpack_require__("./assets/utils/LocalStorage.ts");
+let localStorage = LocalStorage_1.default("OMARZION_TETRIS", LocalStorage_1.replaceArrOnMerge);
+let mw = [Rest_1.default, localStorage, redux_thunk_1.default];
 // Add logging to dev environment
 if (true) {
     const logger = store => next => action => {
-        if (action.type !== 'GAME_LOOP_UPDATE') console.log('dispatching', action);
+        if (action.type !== EventLoopReducer_1.Actions.UPDATE) console.log('dispatching', action);
         let result = next(action);
-        if (action.type !== 'GAME_LOOP_UPDATE') console.log('next state', store.getState());
+        if (action.type !== EventLoopReducer_1.Actions.UPDATE) console.log('next state', store.getState());
         return result;
     };
     const crashReporter = store => next => action => {
@@ -1740,6 +1790,48 @@ exports.App = App;
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ "./assets/utils/LocalStorage.ts":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const deepmerge_1 = __webpack_require__("deepmerge");
+exports.default = (namespace, deepMergeOpts) => store => next => action => {
+    if (typeof action.type === 'undefined' || typeof action.saveLocally === 'undefined') return next(action);
+    next(action);
+    let mergableState = findIn(store.getState(), action.saveLocally);
+    save(namespace, mergableState, deepMergeOpts);
+};
+function findIn(obj, path) {
+    // Get value of interest
+    let change = path.reduce((slice, key) => slice[key], obj);
+    // rebuild path to value
+    return path.reduceRight((slice, key) => ({ [key]: slice }), change);
+}
+exports.findIn = findIn;
+function save(namespace, update, deepMergeOpts) {
+    let currentStorage = load(namespace);
+    let toStore = deepmerge_1.default(currentStorage, update, deepMergeOpts);
+    console.log('save to local storage', toStore);
+    localStorage.setItem(namespace, JSON.stringify(toStore));
+}
+exports.save = save;
+function load(namespace) {
+    let storage = localStorage.getItem(namespace);
+    if (!storage) return {};
+    return JSON.parse(storage);
+}
+exports.load = load;
+exports.replaceArrOnMerge = { arrayMerge: (dest, source) => source };
+function loadAndMerge(namespace, mergeTo, mergeOpts) {
+    return deepmerge_1.default(mergeTo, load(namespace), mergeOpts);
+}
+exports.loadAndMerge = loadAndMerge;
 
 /***/ }),
 
@@ -2206,6 +2298,13 @@ exports.default = app;
 __webpack_require__("./server/index.js");
 module.exports = __webpack_require__("./node_modules/webpack/hot/poll.js?1000");
 
+
+/***/ }),
+
+/***/ "deepmerge":
+/***/ (function(module, exports) {
+
+module.exports = require("deepmerge");
 
 /***/ }),
 

@@ -12,17 +12,20 @@
       "apiRoot": "https://staging.api.wwmach.com/api",
       "authToken": "authorization_token",
       "blogApi": "http://localhost:1337",
-      "port": "1335"
+      "port": "1335",
+      "STORAGE_NAMESPACE": "OMARZION_TETRIS"
     },
     "staging": {
       "apiRoot": "https://staging.api.wwmach.com/api",
       "authToken": "authorization_token",
-      "port": "1335"
+      "port": "1335",
+      "STORAGE_NAMESPACE": "OMARZION_TETRIS"
     },
     "production": {
       "apiRoot": "https://api.wwmach.com/api",
       "authToken": "authorization_token",
-      "port": "1335"
+      "port": "1335",
+      "STORAGE_NAMESPACE": "OMARZION_TETRIS"
     }
   },
   "scripts": {
@@ -36,7 +39,20 @@
     "build:server": "NODE_ENV=production webpack --config config/webpack.prod.server.js --env production",
     "build": "rm -rf ./bin/ && npm-run-all --parallel build:server build:client",
     "start": "echo 'Starting Server' && NODE_ENV=production node bin/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/config/preprocessor.js"
+    },
+    "testMatch": [
+      "**/*.test.(ts|tsx|js)"
+    ]
   },
   "author": "Adam Sparks",
   "license": "MIT",
@@ -49,6 +65,8 @@
     "babel-preset-react": "^6.24.1",
     "compression": "^1.7.0",
     "css-loader": "^0.28.9",
+    "deep-object-diff": "^1.0.4",
+    "deepmerge": "^2.0.1",
     "es6-promise": "^4.2.4",
     "express": "^4.15.5",
     "extract-text-webpack-plugin": "^3.0.0",
@@ -78,8 +96,10 @@
     "webpack-node-externals": "^1.6.0"
   },
   "devDependencies": {
+    "@types/jest": "^22.1.0",
     "@types/react": "^16.0.35",
     "@types/react-dom": "^16.0.3",
+    "jest": "^22.1.4",
     "react-hot-loader": "^3.0.0-beta.7",
     "start-server-webpack-plugin": "^2.2.0",
     "webpack-dev-server": "^2.11.1"
