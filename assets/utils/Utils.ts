@@ -11,6 +11,13 @@ export const for2dTruthy = (matrix, callback) => {
   return tempReturn;
 };
 
+export function findIn(obj, path) {
+  // Get value of interest
+  let change = path.reduce((slice, key) => slice[key], obj);
+  // rebuild path to value
+  return path.reduceRight((slice, key) => ({ [key]: slice }), change);
+}
+
 export const compareWith = (...keys) => (a, b) =>
   a && b ? keys.reduce((acc, cur) => acc && a[cur] === b[cur], true) : false;
 
@@ -48,11 +55,11 @@ export class Format {
 
   static date(timestamp: Date): string {
     let date = new Date(timestamp);
-    return `${Format.padLeft(
-      (date.getMonth() + 1).toString(),
+    return `${Format.padLeft((date.getMonth() + 1).toString(), 2, '0')}/${Format.padLeft(
+      date.getDate().toString(),
       2,
       '0'
-    )}/${Format.padLeft(date.getDate().toString(), 2, '0')}/${date
+    )}/${date
       .getFullYear()
       .toString()
       .slice(2)}`;

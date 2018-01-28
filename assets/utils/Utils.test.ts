@@ -1,4 +1,4 @@
-import { findIn } from './LocalStorage';
+import { findIn } from './Utils';
 
 let testObj = {
   GameBoard: {

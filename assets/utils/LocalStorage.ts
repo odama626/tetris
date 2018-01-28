@@ -1,4 +1,5 @@
 import merge from 'deepmerge';
+import { findIn } from './Utils';
 
 export default (namespace, deepMergeOpts?) => store => next => action => {
   if (typeof action.type === 'undefined' || typeof action.saveLocally === 'undefined')
@@ -8,13 +9,6 @@ export default (namespace, deepMergeOpts?) => store => next => action => {
   let mergableState = findIn(store.getState(), action.saveLocally);
   save(namespace, mergableState, deepMergeOpts);
 };
-
-export function findIn(obj, path) {
-  // Get value of interest
-  let change = path.reduce((slice, key) => slice[key], obj);
-  // rebuild path to value
-  return path.reduceRight((slice, key) => ({ [key]: slice }), change);
-}
 
 export function save(namespace, update, deepMergeOpts?) {
   let currentStorage = load(namespace);

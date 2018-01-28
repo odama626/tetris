@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Canvas from '../Canvas/Canvas';
 import { connect, Dispatch } from 'react-redux';
-import * as sass from './GameBoard.scss';
+import * as style from './GameBoard.scss';
 import * as Actions from './Actions';
 import { Actions as EventLoop } from '../EventLoopReducer';
 import { compareWith } from '../../utils/Utils';
@@ -71,34 +71,33 @@ class GameBoard extends React.Component<any, {}> {
     const { canvasStyle } = this.props.preferences;
 
     return (
-      <div className={sass.container}>
-        <div>
-          <Canvas
-            style={canvasStyle}
-            width={70}
-            height={70}
-            scale={10}
-            mountController={canvasControllers.next}
-            setController={controller => dispatch(Actions.setController('next', controller))}
-          />
-          <Canvas
-            style={canvasStyle}
-            width={70}
-            height={70}
-            scale={10}
-            mountController={canvasControllers.hold}
-            setController={controller => dispatch(Actions.setController('hold', controller))}
-          />
-        </div>
-        <div>
-          <Canvas
-            style={canvasStyle}
-            width={200}
-            height={400}
-            mountController={arena}
-            setController={controller => dispatch(Actions.setArenaController('arena', controller))}
-          />
-        </div>
+      <div className={style.container}>
+        <Canvas
+          className={style.next}
+          style={canvasStyle}
+          width={80}
+          height={80}
+          scale={10}
+          mountController={canvasControllers.next}
+          setController={controller => dispatch(Actions.setController('next', controller))}
+        />
+        <Canvas
+          className={style.hold}
+          style={canvasStyle}
+          width={80}
+          height={80}
+          scale={10}
+          mountController={canvasControllers.hold}
+          setController={controller => dispatch(Actions.setController('hold', controller))}
+        />
+        <Canvas
+          className={style.arena}
+          style={canvasStyle}
+          width={200}
+          height={400}
+          mountController={arena}
+          setController={controller => dispatch(Actions.setArenaController('arena', controller))}
+        />
       </div>
     );
   }

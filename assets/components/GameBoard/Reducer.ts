@@ -72,10 +72,14 @@ export default (state = initialState(), action) => {
       return swapHold(state);
     case Actions.GAME_OVER:
       return cleanupBoard(state);
-    // TODO updated best score, reset game state
-
-    case Actions.SET_COLORTABLE:
-    // return
+    case Actions.SET_TETRIMINOS:
+      return {
+        ...state,
+        tetriminos: {
+          ...state.tetriminos,
+          ...action.tetriminos
+        }
+      };
   }
   return state;
 };

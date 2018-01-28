@@ -9,10 +9,11 @@ import RootReducer, { attachResizeListener } from './RootReducer';
 import { Format } from '../utils/Utils';
 import Rest from '../utils/Rest';
 import LocalStorage, { replaceArrOnMerge } from '../utils/LocalStorage';
+import Recorder, { Playback } from './Recorder/Recorder';
 
 let localStorage = LocalStorage(ENV.STORAGE_NAMESPACE, replaceArrOnMerge);
 
-let mw = [Rest, localStorage, thunk];
+let mw = [Rest, localStorage, Recorder, Playback, thunk];
 
 // Add logging to dev environment
 if (ENV.DEPLOY_TARGET === ENV.TARGET_DEV) {

@@ -7,7 +7,7 @@ export class Actions {
 
   public static start(draw) {
     return (dispatch, getState) => {
-      dispatch({ type: Actions.START, draw });
+      dispatch({ type: Actions.START, draw, initialTick: Date.now() });
       loop(dispatch, getState);
     };
   }
@@ -44,6 +44,7 @@ const loop = (dispatch, getState) => {
 const initialTick = Date.now();
 
 const initialState = {
+  initialTick,
   lastTick: initialTick,
   paused: true,
   active: false,

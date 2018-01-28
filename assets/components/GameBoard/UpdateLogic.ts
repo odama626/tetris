@@ -48,12 +48,13 @@ export const rotate = (state, direction: number) => {
     tetrimino = [...state.tetriminos.current];
   let { pos } = state;
   const { arena } = state;
+  const initialPos = pos.x;
   Matrix.rotate(tetrimino, direction);
   while (arena.isCollision(tetrimino, pos)) {
     pos.x += offset;
     offset = -(offset > 0 ? offset + 1 : offset - 1);
     if (offset > tetrimino[0].length) {
-      pos.x = pos;
+      pos.x = initialPos;
       return rotate(
         {
           ...state,
