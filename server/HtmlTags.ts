@@ -13,8 +13,7 @@ if (ENV.DEPLOY_TARGET === ENV.TARGET_DEV) {
   styles += `<link rel='stylesheet' type='text/css' href='/res/main.css'>`;
   scripts = `<script src="http://localhost:${+ENV.port + 1}/main.js"></script>`;
 } else {
-  styles += `<link rel="stylesheet" type="text/css" href="http://localhost:${+ENV.port +
-    1}/main.css">`;
+  styles += `<link rel="stylesheet" type="text/css" href="/main.css">`;
 }
 
 export default { styles, scripts };
