@@ -1,4 +1,6 @@
 import { COLORTABLE } from '../Canvas/Tetriminos';
+import { IPreferences } from './interfaces';
+
 
 export class Actions {
   public static SET_COLOR_TABLE = 'PREFERENCES_SET_COLOR_TABLE';
@@ -30,7 +32,7 @@ const initialState = {
   }
 };
 
-export default (state = initialState, action) => {
+export default (state: IPreferences = initialState, action) => {
   switch (action.type) {
     case Actions.SET_COLOR_TABLE:
       return {

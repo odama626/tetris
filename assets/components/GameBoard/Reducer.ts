@@ -1,8 +1,9 @@
 import generateTetrimino, { COLORTABLE } from '../Canvas/Tetriminos';
 import * as Actions from './Actions';
 import { Actions as EventLoop } from '../EventLoopReducer';
+import { IGameBoard } from './interfaces';
 import {
-  addCanvasController,
+  setCanvasController,
   swapHold,
   rotate,
   update,
@@ -15,8 +16,8 @@ import {
 export const initialState = () => ({
   lastTick: 0,
   tickRate: 1000,
-  arena: null,
   canvasControllers: {
+    arena: null,
     hold: null,
     next: null
   },
@@ -34,19 +35,10 @@ export const initialState = () => ({
   score: { best: 0, current: 0, last: 0 }
 });
 
-export default (state = initialState(), action) => {
+export default (state: IGameBoard = initialState(), action) => {
   switch (action.type) {
-    case Actions.SET_ARENA_CONTROLLER:
-      return {
-        ...state,
-        [action.canvas]: action.controller,
-        pos: {
-          x: action.controller.getMiddleFor(state.tetriminos.current).x,
-          y: 0
-        }
-      };
-    case Actions.SET_CONTROLLER:
-      return addCanvasController(state, action);
+    case Actions.SET_CANVAS_CONTROLLER:
+      return setCanvasController(state, action);
     case EventLoop.UPDATE:
       return update({
         ...state,

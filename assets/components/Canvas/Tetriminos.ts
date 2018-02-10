@@ -1,10 +1,10 @@
 export const TETRIMINOS = 'TOSZLJI';
 
-import { iMatrix } from './Matrix';
+import { IMatrix, IMaybeMatrix } from './Matrix';
 
 export default () => createTetrimino(TETRIMINOS[(TETRIMINOS.length * Math.random()) | 0]);
 
-export function createTetrimino(type): iMatrix | null {
+export function createTetrimino(type): IMaybeMatrix {
   if (type === 'T') {
     return [[0, 0, 0], [1, 1, 1], [0, 1, 0]];
   } else if (type === 'O') {
@@ -23,7 +23,7 @@ export function createTetrimino(type): iMatrix | null {
   return null;
 }
 
-export function getTetriminoType(tetrimino: iMatrix): string | null {
+export function getTetriminoType(tetrimino: IMatrix): string | null {
   if (tetrimino === null) return null;
   let colorIndex = tetrimino.reduce((acc, cur) => [...acc, ...cur], []).find(a => a > 0);
   return colorIndex ? TETRIMINOS[colorIndex - 1] : null;

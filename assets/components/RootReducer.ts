@@ -71,6 +71,7 @@ export default combineReducers({
   Header,
   Home,
   GameBoard,
+  PlaybackBoard: GameBoard,
   EventLoop,
   router: routerReducer,
   Preferences

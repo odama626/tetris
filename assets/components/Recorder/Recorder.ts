@@ -76,7 +76,7 @@ export default store => next => action => {
 
   change.now = Date.now() - delta;
   recorded.push({ ...change });
-  console.log('recorder', recorded);
+  // console.log('recorder', recorded);
 };
 
 export const Playback = store => next => action => {

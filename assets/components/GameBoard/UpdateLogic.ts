@@ -9,16 +9,10 @@ const nextTetrimino = ({ next, current }) => ({
   next: generateTetrimino()
 });
 
-export const cleanupBoard = ({
-  score: { best, current, last },
-  arena,
-  canvasControllers,
-  ...state
-}) => {
-  arena.clearMatrix();
+export const cleanupBoard = ({ score: { best, current, last }, canvasControllers, ...state }) => {
+  canvasControllers.arena.clearMatrix();
   return {
     ...initialState(),
-    arena,
     canvasControllers,
     score: {
       last: current,
@@ -28,13 +22,25 @@ export const cleanupBoard = ({
   };
 };
 
-export const addCanvasController = ({ canvasControllers, ...state }, { canvas, controller }) => ({
-  ...state,
-  canvasControllers: {
-    ...canvasControllers,
-    [canvas]: controller
+export const setCanvasController = (
+  { canvasControllers, pos, ...state },
+  { canvas, controller }
+) => {
+  if (canvas === 'arena') {
+    pos = {
+      x: controller.getMiddleFor(state.tetriminos.current),
+      y: 0
+    };
   }
-});
+  return {
+    ...state,
+    pos,
+    canvasControllers: {
+      ...canvasControllers,
+      [canvas]: controller
+    }
+  };
+};
 
 const updateScore = ({ current, best }, linesCleared, lastLines) => {
   current += scoreModifier[linesCleared] * (lastLines === 4 ? 100 : 1);
@@ -47,7 +53,7 @@ export const rotate = (state, direction: number) => {
   let offset = 1,
     tetrimino = [...state.tetriminos.current];
   let { pos } = state;
-  const { arena } = state;
+  const { arena } = state.canvasControllers;
   const initialPos = pos.x;
   Matrix.rotate(tetrimino, direction);
   while (arena.isCollision(tetrimino, pos)) {
@@ -73,7 +79,7 @@ export const rotate = (state, direction: number) => {
 };
 
 export const move = (state, move) => {
-  const { arena, pos: { x, y }, tetriminos: { current } } = state;
+  const { canvasControllers: { arena }, pos: { x, y }, tetriminos: { current } } = state;
   return arena.isCollision(current, { x: x + move, y })
     ? state
     : { ...state, pos: { x: x + move, y } };
@@ -102,7 +108,7 @@ export const hardDrop = state => {
 };
 
 export const drop = state => {
-  const { tetriminos, arena, now } = state;
+  const { tetriminos, canvasControllers: { arena }, now } = state;
   let { pos: { x, y }, score, lastLines } = state;
   y++;
 

@@ -1,7 +1,7 @@
 import generateTetrimino from '../Canvas/Tetriminos';
+import CanvasController from '../Canvas/CanvasController';
 
-export const SET_CONTROLLER = 'GAMEBOARD_SET_CONTROLLER';
-export const SET_ARENA_CONTROLLER = 'GAMEBOARD_SET_ARENA_CONTROLLER';
+export const SET_CANVAS_CONTROLLER = 'GAMEBOARD_SET_CANVAS_CONTROLLER';
 export const GAME_OVER = 'GAMEBOARD_GAME_OVER';
 
 export const SET_TETRIMINOS = 'GAMEBOARD_SET_TETRMINOS';
@@ -28,17 +28,12 @@ export class InputActions {
   static pause = () => ({ type: PAUSE, now: Date.now() });
 }
 
-export const setController = (canvas, controller) => ({
-  type: SET_CONTROLLER,
+export const setCanvasController = (canvas, controller: CanvasController) => ({
+  type: SET_CANVAS_CONTROLLER,
   canvas,
   controller
 });
 
-export const setArenaController = (canvas, controller) => ({
-  type: SET_ARENA_CONTROLLER,
-  canvas,
-  controller
-});
 
 export const setColorTable = colorTable => ({
   type: SET_COLORTABLE,

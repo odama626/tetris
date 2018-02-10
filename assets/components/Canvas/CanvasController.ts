@@ -1,7 +1,7 @@
-import Matrix, { iMatrix, iPoint } from './Matrix';
+import Matrix, { IMatrix, IPoint } from './Matrix';
 import { for2dTruthy } from '../../utils/Utils';
 
-export interface iCanvasStyle {
+export interface ICanvasStyle {
   clearColor: string;
   colorTable: (string | null)[];
   canvas: Canvas2DContextAttributes;
@@ -12,10 +12,10 @@ export default class CanvasController {
   private canvas: HTMLCanvasElement;
   private context;
   private scale: number;
-  private matrix: iMatrix;
+  private matrix: IMatrix;
   private width: number;
   private height: number;
-  private style: iCanvasStyle;
+  private style: ICanvasStyle;
 
   constructor(canvas) {
     this.canvas = canvas;
@@ -65,7 +65,7 @@ export default class CanvasController {
     context.fillRect(x, y, 1, 1);
   }
 
-  draw(matrix: iMatrix = this.matrix, pos: iPoint, op = this.defaultDrawOp) {
+  draw(matrix: IMatrix = this.matrix, pos?: IPoint, op = this.defaultDrawOp) {
     if (!matrix) return;
     if (matrix === this.matrix) {
       pos = { x: 0, y: 0 };
@@ -73,12 +73,12 @@ export default class CanvasController {
     pos = pos || this.getMiddleFor(matrix);
     return for2dTruthy(matrix, (x, y) => {
       if (matrix[y][x] !== 0) {
-        op(this.context, pos.x + x, pos.y + y, this.style.colorTable[matrix[y][x]]);
+        op(this.context, pos!.x + x, pos!.y + y, this.style.colorTable[matrix[y][x]]);
       }
     });
   }
 
-  drawShadow(matrix: iMatrix, pos: iPoint, drawOp) {
+  drawShadow(matrix: IMatrix, pos: IPoint, drawOp) {
     let shadowPos = { ...pos };
     while (!this.isCollision(matrix, shadowPos)) {
       shadowPos.y++;
@@ -93,7 +93,7 @@ export default class CanvasController {
   }
 
   /// Logical Functions
-  merge(tetrimino: Matrix, pos: iPoint) {
+  merge(tetrimino: Matrix, pos: IPoint) {
     return for2dTruthy(tetrimino, (w, h) => {
       if (tetrimino[h][w] !== 0) {
         this.matrix[h + pos.y][w + pos.x] = tetrimino[h][w];
@@ -107,7 +107,7 @@ export default class CanvasController {
     }
   }
 
-  isCollision(tetrimino: iMatrix, pos: iPoint) {
+  isCollision(tetrimino: IMatrix, pos: IPoint) {
     return for2dTruthy(tetrimino, (x, y) => {
       return (
         tetrimino[y][x] !== 0 && (this.matrix[y + pos.y] && this.matrix[y + pos.y][x + pos.x]) !== 0
@@ -117,7 +117,7 @@ export default class CanvasController {
 
   sweep() {
     let modifier = 0;
-    this.matrix = this.matrix.reduce((newMatrix: iMatrix, row) => {
+    this.matrix = this.matrix.reduce((newMatrix: IMatrix, row) => {
       let rowFull = row.indexOf(0) === -1;
       if (rowFull) modifier++;
       return rowFull ? [row.fill(0), ...newMatrix] : [...newMatrix, row];
@@ -125,7 +125,7 @@ export default class CanvasController {
     return modifier;
   }
 
-  getMiddleFor(matrix: iMatrix) {
+  getMiddleFor(matrix: IMatrix): IPoint {
     return {
       x: (this.matrix[0].length / 2 - matrix[0].length / 2) | 0,
       y: (this.matrix.length / 2 - matrix.length / 2) | 0

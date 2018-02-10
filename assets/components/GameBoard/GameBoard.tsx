@@ -2,49 +2,32 @@ import * as React from 'react';
 import Canvas from '../Canvas/Canvas';
 import { connect, Dispatch } from 'react-redux';
 import * as style from './GameBoard.scss';
-import * as Actions from './Actions';
-import { Actions as EventLoop } from '../EventLoopReducer';
 import { compareWith } from '../../utils/Utils';
 
 // Types
-import CanvasController, { iCanvasStyle } from '../Canvas/CanvasController';
-import { iMatrix, iPoint } from '../Canvas/Matrix';
+import CanvasController from '../Canvas/CanvasController';
+import { IMatrix } from '../Canvas/Matrix';
+import { IGameBoard, GameBoardProps } from './interfaces';
 
-class GameBoard extends React.Component<any, {}> {
-  private importantPropsMatch = compareWith(
-    'arena',
-    'gameInProgress',
-    'score',
-    'tetriminos',
-    'gameOver'
-  );
+export default class GameBoard extends React.Component<GameBoardProps, {}> {
+  private importantPropsMatch = compareWith('arena', 'gameInProgress', 'score', 'tetriminos', 'gameOver');
   componentDidMount() {
-    setTimeout(() => this.props.dispatch(EventLoop.start(this.draw.bind(this))), 0);
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(EventLoop.pause());
+    this.props.setDrawFunction(this.draw.bind(this));
   }
 
   shouldComponentUpdate(nextProps) {
     return !this.importantPropsMatch(this.props, nextProps);
   }
 
-  componentDidUpdate() {
-    if (this.props.gameOver) {
-      this.props.dispatch(EventLoop.stop());
-      this.props.dispatch(Actions.gameOver());
-    }
-  }
-
   draw() {
-    const { pos, arena, tetriminos: { current, next, hold } } = this.props;
-    const { next: nextController, hold: holdController } = this.props.canvasControllers;
+    const { pos, tetriminos: { current, next, hold }, showNext, showHold } = this.props;
+    const { arena, next: nextController, hold: holdController } = this.props.canvasControllers;
     const { canvasStyle: { drawShadow } } = this.props.preferences;
+    if (!arena) return;
 
     arena.clear();
     if (drawShadow) {
-      arena.drawShadow(current, pos, (context, x, y, color) => {
+      arena.drawShadow(current!, pos, (context, x, y, color) => {
         context.fillStyle = color;
         context.globalAlpha = 0.2;
         context.fillRect(x, y, 1, 1);
@@ -54,20 +37,25 @@ class GameBoard extends React.Component<any, {}> {
         context.strokeRect(x, y, 1, 1);
       });
     }
-    arena.draw(current, pos);
+    arena.draw(current!, pos);
     arena.draw();
 
-    nextController.clear();
-    nextController.draw(next);
-    nextController.write('Next');
+    if (nextController && showNext) {
+      nextController.clear();
+      nextController.draw(next!);
+      nextController.write('Next');
+    }
 
-    holdController.clear();
-    holdController.draw(hold);
-    holdController.write('Hold');
+    if (holdController && showHold) {
+      holdController.clear();
+      holdController.draw(hold!);
+      holdController.write('Hold');
+    }
   }
 
   render() {
-    const { dispatch, score, arena, canvasControllers } = this.props;
+    const { score, setCanvasController } = this.props;
+    const { arena, next, hold } = this.props.canvasControllers;
     const { canvasStyle } = this.props.preferences;
 
     return (
@@ -78,8 +66,8 @@ class GameBoard extends React.Component<any, {}> {
           width={80}
           height={80}
           scale={10}
-          mountController={canvasControllers.next}
-          setController={controller => dispatch(Actions.setController('next', controller))}
+          mountController={next}
+          setController={controller => setCanvasController('next', controller)}
         />
         <Canvas
           className={style.hold}
@@ -87,8 +75,8 @@ class GameBoard extends React.Component<any, {}> {
           width={80}
           height={80}
           scale={10}
-          mountController={canvasControllers.hold}
-          setController={controller => dispatch(Actions.setController('hold', controller))}
+          mountController={hold}
+          setController={controller => setCanvasController('hold', controller)}
         />
         <Canvas
           className={style.arena}
@@ -96,13 +84,9 @@ class GameBoard extends React.Component<any, {}> {
           width={200}
           height={400}
           mountController={arena}
-          setController={controller => dispatch(Actions.setArenaController('arena', controller))}
+          setController={controller => setCanvasController('arena', controller)}
         />
       </div>
     );
   }
 }
-
-export default connect(state => ({ ...state.GameBoard, preferences: state.Preferences }))(
-  GameBoard
-);
