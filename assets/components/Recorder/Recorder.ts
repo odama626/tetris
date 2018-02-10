@@ -1,8 +1,6 @@
+import { diff } from 'deep-object-diff';
 import * as Actions from '../GameBoard/Actions';
 import { Actions as Events } from '../EventLoopReducer';
-import { findIn, compareWith } from '../../utils/Utils';
-import { getTetriminoType, createTetrimino } from '../Canvas/Tetriminos';
-import { compress, expand, Actions as CompressedActions } from './TransformActionTypes';
 
 const importantActions = [
   Actions.DROP,
@@ -12,95 +10,75 @@ const importantActions = [
   Actions.MOVE_RIGHT,
   Actions.ROTATE_CLOCKWISE,
   Actions.ROTATE_COUNTER_CLOCKWISE,
-  Events.UPDATE
+  Events.UPDATE,
+  Events.START
 ];
 
-const traceTetriminoActions = [Actions.DROP, Actions.HARD_DROP, Events.UPDATE];
+let originalState: any, nextState: any, change: any;
+let recorded: any[];
+let delta;
 
-const startRecording = Events.START;
-const stopRecording = Events.STOP;
-
-let recordedActions: any = [];
-let timeOffset;
-let lastMinos, theseMinos;
-
-const sameTetriminos = compareWith('next', 'current', 'hold');
-
-function lastEventUpdateNotNeeded(action, lastRecorded, timeOffset) {
-  if (
-    action.type === Events.UPDATE &&
-    lastRecorded &&
-    lastRecorded.type === CompressedActions.UPDATE
-  ) {
-    if (action.now - timeOffset - lastRecorded.now <= 1000) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function pullTetriminos(store, timeOffset) {
-  const { next, current, hold } = store.getState().GameBoard.tetriminos;
+function removeTimings(state) {
   return {
-    type: Actions.SET_TETRIMINOS,
-    tetriminos: {
-      next: getTetriminoType(next),
-      current: getTetriminoType(current),
-      hold: getTetriminoType(hold)
-    },
-    now: Date.now() - timeOffset
+    ...state,
+    now: undefined,
+    delta: undefined,
+    lastTick: undefined
   };
 }
 
+function cleanInitialState(originalState) {
+  let state = { ...originalState };
+  delete state.arena;
+  delete state.canvasControllers;
+  delete state.delta;
+  delete state.lastTick;
+  return state;
+}
+
+function updateTetriminos(nextState, diff) {
+  Object.keys(diff).forEach(key => {
+    diff[key] = nextState && nextState[key] ? [...nextState[key]] : null;
+  });
+}
+
 export default store => next => action => {
-  if (action.type === stopRecording) {
-    console.log('RecordedActions', recordedActions);
-  } else if (importantActions.indexOf(action.type) > -1) {
-    if (
-      !lastEventUpdateNotNeeded(action, recordedActions[recordedActions.length - 1], timeOffset)
-    ) {
-      recordedActions.push(compress({ type: action.type, now: action.now - timeOffset }));
-    }
+  if (importantActions.indexOf(action.type) === -1) return next(action);
+
+  if (action.type === Events.START) {
+    recorded = [];
+    delta = Date.now();
+    originalState = cleanInitialState(store.getState().GameBoard);
+    originalState.now = 0;
+    recorded.push(originalState);
+    return next(action);
   }
 
-  if (traceTetriminoActions.indexOf(action.type) > -1) {
-    lastMinos = pullTetriminos(store, timeOffset);
-  }
+  originalState = removeTimings(store.getState().GameBoard);
   next(action);
-  if (action.type === startRecording) {
-    timeOffset = Date.now();
-    recordedActions = [compress(pullTetriminos(store, timeOffset))];
-  } else if (traceTetriminoActions.indexOf(action.type) > -1) {
-    theseMinos = pullTetriminos(store, timeOffset);
-    if (!sameTetriminos(lastMinos.tetriminos, theseMinos.tetriminos)) {
-      recordedActions.push(compress(theseMinos));
-    }
+  nextState = removeTimings(store.getState().GameBoard);
+  change = diff(originalState, nextState);
+
+  if (
+    action.type === Actions.ROTATE_CLOCKWISE ||
+    action.type === Actions.ROTATE_COUNTER_CLOCKWISE
+  ) {
+    // Deep-object-diff doesn't pick up matrix rotations
+    // stub current tetrimino to guarantee we record the rotation
+    change['tetriminos'] = { current: true };
   }
+
+  if (Object.keys(change).length === 0) return;
+
+  if (change['tetriminos']) {
+    updateTetriminos(nextState.tetriminos, change.tetriminos);
+  }
+
+  change.now = Date.now() - delta;
+  recorded.push({ ...change });
+  console.log('recorder', recorded);
 };
-
-import gamePlayback from '../../../playData';
-
-const loop = ({ dispatch, getState }) => {};
 
 export const Playback = store => next => action => {
   next(action);
-  if (action.type === Events.START) {
-    let timeOffset = Date.now();
-    const loop = () => {
-      let delta = Date.now() - timeOffset;
-      if (gamePlayback.length > 0 && gamePlayback[0].now <= delta) {
-        let action = expand(gamePlayback.shift());
-        if (action.type === Actions.SET_TETRIMINOS) {
-          action.tetriminos = {
-            next: createTetrimino(action.tetriminos.next),
-            current: createTetrimino(action.tetriminos.current),
-            hold: createTetrimino(action.tetriminos.hold)
-          };
-        }
-        store.dispatch(action);
-      }
-      window.requestAnimationFrame(loop);
-    };
-    loop();
-  }
 };

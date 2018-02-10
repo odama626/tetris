@@ -69,6 +69,7 @@ export default (state = initialState(), action) => {
     case Actions.ROTATE_COUNTER_CLOCKWISE:
       return rotate(state, 1);
     case Actions.SWAP_HOLD:
+      // TODO same collision checks as rotation to prevent new piece being outside of arena
       return swapHold(state);
     case Actions.GAME_OVER:
       return cleanupBoard(state);
