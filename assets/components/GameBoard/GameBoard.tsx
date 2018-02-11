@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Canvas from '../Canvas/Canvas';
-import { connect, Dispatch } from 'react-redux';
 import * as style from './GameBoard.scss';
 import { compareWith } from '../../utils/Utils';
 

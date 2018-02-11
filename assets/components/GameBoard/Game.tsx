@@ -17,7 +17,11 @@ class Game extends React.Component<GameProps, {}> {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    setTimeout(() => dispatch(EventLoop.start(this.gameBoard)), 0);
+    let render = () => {
+      this.gameBoard();
+      // this.playback();
+    }
+    setTimeout(() => dispatch(EventLoop.start(render)), 0);
   }
   componentWillUnmount() {
     this.props.dispatch(EventLoop.pause());
@@ -46,14 +50,14 @@ class Game extends React.Component<GameProps, {}> {
           />
         </div>
         <div>
-          <Gameboard
+          {/* <Gameboard
             showNext={false}
             showHold={false}
             setCanvasController={(canvas, controller) => console.log(canvas, controller)}
             setDrawFunction={draw => (this.playback = draw)}
             {...playbackBoard}
             preferences={preferences}
-          />
+          /> */}
         </div>
       </div>
     );
