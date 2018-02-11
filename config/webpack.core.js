@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
-const env = require('./envLoader');
+const env = require('./envLoader').loader;
 
 module.exports = {
   stats: { children: false },

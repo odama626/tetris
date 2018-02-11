@@ -8,10 +8,10 @@ import thunk from 'redux-thunk';
 import RootReducer, { attachResizeListener } from './RootReducer';
 import { Format } from '../utils/Utils';
 import Rest from '../utils/Rest';
-import LocalStorage, { replaceArrOnMerge } from '../utils/LocalStorage';
+import LocalStorage from '../utils/LocalStorage';
 import Recorder, { Playback } from './Recorder/Recorder';
 
-let localStorage = LocalStorage(ENV.STORAGE_NAMESPACE, replaceArrOnMerge);
+let localStorage = LocalStorage(ENV.STORAGE_NAMESPACE);
 
 let mw = [Rest, localStorage, Recorder, Playback, thunk];
 

@@ -4,6 +4,8 @@ import { connect, Dispatch } from 'react-redux';
 
 import * as Actions from './Actions';
 import { Actions as EventLoop } from '../EventLoopReducer';
+import { Actions as PlaybackActions } from '../Recorder/Reducer';
+
 import Gameboard from './GameBoard';
 import { GameProps } from './interfaces';
 
@@ -19,7 +21,7 @@ class Game extends React.Component<GameProps, {}> {
     const { dispatch } = this.props;
     let render = () => {
       this.gameBoard();
-      // this.playback();
+      this.playback();
     }
     setTimeout(() => dispatch(EventLoop.start(render)), 0);
   }
@@ -50,14 +52,14 @@ class Game extends React.Component<GameProps, {}> {
           />
         </div>
         <div>
-          {/* <Gameboard
+          <Gameboard
             showNext={false}
-            showHold={false}
-            setCanvasController={(canvas, controller) => console.log(canvas, controller)}
+            showHold={true}
+            setCanvasController={(canvas, controller) =>dispatch(PlaybackActions.setCanvasController(canvas, controller))}
             setDrawFunction={draw => (this.playback = draw)}
             {...playbackBoard}
             preferences={preferences}
-          /> */}
+          />
         </div>
       </div>
     );

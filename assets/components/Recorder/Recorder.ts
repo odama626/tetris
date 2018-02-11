@@ -68,6 +68,10 @@ export default store => next => action => {
     change['tetriminos'] = { current: true };
   }
 
+  // if (action.type === Actions.DROP && change['tetriminos']) {
+  //   change['tetriminos'] = { current: true, next: true}
+  // }
+
   if (Object.keys(change).length === 0) return;
 
   if (change['tetriminos']) {

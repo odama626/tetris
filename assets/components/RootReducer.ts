@@ -5,6 +5,7 @@ import Login from './Login/Reducer';
 import Header from './Header/Reducer';
 import Home from './Home/Reducer';
 import GameBoard from './GameBoard/Reducer';
+import PlaybackBoard from './Recorder/Reducer';
 import EventLoop from './EventLoopReducer';
 import Preferences from './Preferences/Reducer';
 
@@ -71,7 +72,7 @@ export default combineReducers({
   Header,
   Home,
   GameBoard,
-  // PlaybackBoard: GameBoard,
+  PlaybackBoard,
   EventLoop,
   router: routerReducer,
   Preferences

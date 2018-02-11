@@ -1,18 +1,18 @@
-import merge from 'deepmerge';
+import * as merge from 'mixin-deep';
 import { findIn } from './Utils';
 
-export default (namespace, deepMergeOpts?) => store => next => action => {
+export default (namespace) => store => next => action => {
   if (typeof action.type === 'undefined' || typeof action.saveLocally === 'undefined')
     return next(action);
 
   next(action);
   let mergableState = findIn(store.getState(), action.saveLocally);
-  save(namespace, mergableState, deepMergeOpts);
+  save(namespace, mergableState);
 };
 
-export function save(namespace, update, deepMergeOpts?) {
+export function save(namespace, update) {
   let currentStorage = load(namespace);
-  let toStore = merge(currentStorage, update, deepMergeOpts);
+  let toStore = merge(currentStorage, update);
   console.log('save to local storage', toStore);
   localStorage.setItem(namespace, JSON.stringify(toStore));
 }
@@ -23,8 +23,6 @@ export function load(namespace) {
   return JSON.parse(storage);
 }
 
-export const replaceArrOnMerge = { arrayMerge: (dest, source) => source };
-
-export function loadAndMerge(namespace, mergeTo, mergeOpts) {
-  return merge(mergeTo, load(namespace), mergeOpts);
+export function loadAndMerge(namespace, mergeTo) {
+  return merge(mergeTo, load(namespace));
 }

@@ -1,6 +1,6 @@
 const package = require('../package.json');
 
-function LoadEnvironment() {
+function LoadEnvironmentToStrings() {
   let env = process.env.NODE_ENV || 'dev';
   let nodes = package.environment[env];
   let keys = Object.keys(nodes);
@@ -15,4 +15,14 @@ function LoadEnvironment() {
   return result;
 }
 
-module.exports = LoadEnvironment;
+function LoadEnv() {
+  let env = LoadEnvironmentToStrings();
+  return Object.keys(env)
+    .map(key => ({[key.slice(4)]: env[key].replace(/[\'|\"]/g, '')}))
+    .reduce((a, c) => ({...a, ...c}), {}); 
+}
+
+module.exports = {
+  loader: LoadEnvironmentToStrings,
+  node: LoadEnv
+}

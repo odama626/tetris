@@ -28,7 +28,7 @@ export class InputActions {
   static pause = () => ({ type: PAUSE, now: Date.now() });
 }
 
-export const setCanvasController = (canvas, controller: CanvasController) => ({
+export const setCanvasController = (canvas: string, controller: CanvasController) => ({
   type: SET_CANVAS_CONTROLLER,
   canvas,
   controller

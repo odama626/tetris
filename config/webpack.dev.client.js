@@ -1,9 +1,8 @@
 const webpack = require('webpack');
 const webpackBase = require('./webpack.base.client');
-const extend = require('util')._extend;
-const port = +require('./envLoader')()['ENV.port'].replace(/\"/g, ''); // Load port from environment and coerce it into int
+const port = +require('./envLoader').loader()['ENV.port'].replace(/\"/g, ''); // Load port from environment and coerce it into int
 
-module.exports = extend(webpackBase, {
+module.exports = {...webpackBase, ...{
   entry: [
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${port + 1}`,
@@ -39,4 +38,4 @@ module.exports = extend(webpackBase, {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   ])
-});
+}};
