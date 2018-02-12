@@ -1,6 +1,8 @@
 import 'isomorphic-fetch';
 import Actions from '../components/Login/Actions';
 
+import { ENV } from '../../config/env';
+
 export default store => next => action => {
   if (typeof action.type ==='undefined' || typeof action.url === 'undefined') return next(action);
 

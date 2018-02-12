@@ -9,6 +9,8 @@ import PlaybackBoard from './Recorder/Reducer';
 import EventLoop from './EventLoopReducer';
 import Preferences from './Preferences/Reducer';
 
+import { ENV } from '../../config/env';
+
 const initialWindowState = {
   width: ENV.BUILD_TARGET === 'client' ? window.innerWidth : 0,
   height: ENV.BUILD_TARGET === 'client' ? window.innerHeight : 0,
