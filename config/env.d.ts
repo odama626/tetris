@@ -11,6 +11,7 @@ export interface IEnvironment {
   // Api
   apiRoot: string;
   apiPort: number;
+  MONGO_URL: string;
 
   // Client
   authToken: string;
