@@ -7,7 +7,7 @@
  *    Add its type here in the ENV object for typescript
  */
 
-export interface IEnvironment {
+interface IEnvironment {
   // Api
   apiRoot: string;
   apiPort: number;
@@ -32,4 +32,5 @@ export interface IEnvironment {
   TARGET_PRODUCTION: string;
 }
 
+// export declare var ENV: IEnvironment;
 declare var ENV: IEnvironment;

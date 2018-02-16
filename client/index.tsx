@@ -7,7 +7,6 @@ import createStore from '../assets/components/Store';
 import { Provider } from 'react-redux';
 import DefaultInput from './DefaultInput';
 import { loadAndMerge } from '../assets/utils/LocalStorage';
-import { ENV } from '../config/env';
 
 declare var module;
 declare var window;

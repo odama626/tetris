@@ -11,8 +11,6 @@ import Rest from '../utils/Rest';
 import LocalStorage from '../utils/LocalStorage';
 import Recorder, { Playback } from './Recorder/Recorder';
 
-import { ENV } from '../../config/env';
-
 let localStorage = LocalStorage(ENV.STORAGE_NAMESPACE);
 
 let mw = [Rest, localStorage, Recorder, Playback, thunk];

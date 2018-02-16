@@ -4,8 +4,6 @@ import * as mongoose from 'mongoose';
 
 import User from './models/User';
 
-import { IEnvironment } from '../../config/env';
-
 const env: IEnvironment = require('../../config/envLoader').node();
 
 // Setup database connection
